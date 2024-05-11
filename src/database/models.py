@@ -17,3 +17,11 @@ class Contact(Base):
     phone_number = Column(String(15), unique=True, nullable=False)
     birthday = Column(Date, nullable=False)
     aditional = Column(String(200))
+
+
+class User(Base):
+    __tablename__ = 'users'
+
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String, unique=True, index=True)
+    hashed_password = Column(String)

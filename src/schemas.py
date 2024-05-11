@@ -18,3 +18,8 @@ class ContactCreate(ContactBase):
 
 class ContactUpdate(ContactBase):
     pass
+
+
+class UserCreate(BaseModel):
+    email: EmailStr
+    password: str
