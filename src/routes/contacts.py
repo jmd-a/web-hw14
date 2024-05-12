@@ -1,8 +1,9 @@
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Depends, Header
 from datetime import date, timedelta
 from src.database.models import Contact
 from src.schemas import ContactBase, ContactCreate, ContactUpdate
 from typing import List
+from src.security import get_current_user_token
 
 router = APIRouter()
 
@@ -10,10 +11,8 @@ contacts_db = []
 
 
 @router.post("/contacts/")
-async def create_contact(contact: ContactCreate):
-    new_contact = Contact(**contact.dict())
-    contacts_db.append(new_contact)
-    return new_contact
+async def create_contact(contact: ContactCreate, token: str = Depends(get_current_user_token)):
+    return await contacts.create_contact(contact=contact, token=token)
 
 
 @router.get("/contacts/")

@@ -3,6 +3,8 @@ from typing import List, Optional
 from src.database.models import Contact
 from src.schemas import ContactCreate, ContactUpdate
 from datetime import date, timedelta
+from fastapi_limiter import FastAPILimiter
+from fastapi_limiter.depends import RateLimiter
 
 
 def get_contacts(skip: int = 0, limit: int = 100, db: Session = None) -> List[Contact]:
@@ -13,7 +15,9 @@ def get_contact(contact_id: int, db: Session = None) -> Optional[Contact]:
     return db.query(Contact).filter(Contact.id == contact_id).first()
 
 
-def create_contact(contact: ContactCreate, db: Session = None) -> Contact:
+async def create_contact(contact: ContactCreate, db: Session = None, token: str = "") -> Contact:
+    await FastAPILimiter.check(f"limit_create_contact_{token}", limit=10, period=60)
+
     new_contact = Contact(**contact.dict())
     db.add(new_contact)
     db.commit()

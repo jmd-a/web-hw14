@@ -25,6 +25,12 @@ async def get_user_by_email(email: str):
 
 
 async def create_user(user_data: UserCreate) -> User:
+    try:
+        user_data_dict = user_data.dict()
+        UserCreate(**user_data_dict)
+    except ValidationError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
     db = SessionLocal()
     user = User(email=user_data.email, hashed_password=user_data.password)
     db.add(user)
